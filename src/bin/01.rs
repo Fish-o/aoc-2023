@@ -5,11 +5,11 @@ advent_of_code::solution!(1);
 pub fn part_one(input: &str) -> Option<u32> {
     Some(
         input
-            .split("\n")
+            .split('\n')
             .map(|f| f.chars().collect::<Vec<_>>())
-            .map(|c| c.into_iter().filter(|f| f.clone().is_numeric()))
+            .map(|c| c.into_iter().filter(|f| (*f).is_numeric()))
             .map(|c| c.collect::<Vec<char>>())
-            .filter(|c| c.len() >= 1)
+            .filter(|c| !c.is_empty())
             .map(|c| format!("{}{}", c.first().unwrap(), c.last().unwrap()))
             .map(|s| s.parse::<u32>().unwrap())
             .sum(),
@@ -19,7 +19,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     Some(
         input
-            .split("\n")
+            .split('\n')
             .map(|s| {
                 if s.chars().filter(|c| c.is_alphabetic()).count() < 3 {
                     return s.to_string();
@@ -65,9 +65,9 @@ pub fn part_two(input: &str) -> Option<u32> {
                 changed.iter().collect::<String>()
             })
             .map(|f| f.chars().collect::<Vec<_>>())
-            .map(|c| c.into_iter().filter(|f| f.clone().is_numeric()))
+            .map(|c| c.into_iter().filter(|f| (*f).is_numeric()))
             .map(|c| c.collect::<Vec<char>>())
-            .filter(|c| c.len() >= 1)
+            .filter(|c| !c.is_empty())
             .map(|c| format!("{}{}", c.first().unwrap(), c.last().unwrap()))
             .map(|s| s.parse::<u32>().expect("Parsable"))
             .sum(),

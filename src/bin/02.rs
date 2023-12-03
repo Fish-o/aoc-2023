@@ -18,19 +18,19 @@ struct Game {
 fn create_grabs(input: &str) -> Vec<(u32, Vec<Grab>)> {
     input
         .lines()
-        .map(|l| l.split(":"))
+        .map(|l| l.split(':'))
         .map(|mut p| (p.next().unwrap(), p.next().unwrap()))
         .map(|(game_id, game)| {
-            let game_id = game_id.split(" ").last().unwrap().parse::<u32>().unwrap();
-            let grabs = game.split(";");
+            let game_id = game_id.split(' ').last().unwrap().parse::<u32>().unwrap();
+            let grabs = game.split(';');
             let grabs = grabs
                 .map(|g| {
-                    let colors = g.trim().split(",");
+                    let colors = g.trim().split(',');
                     let mut blue = 0;
                     let mut green = 0;
                     let mut red = 0;
                     for color_grab in colors {
-                        let mut color_grab_split = color_grab.trim().split(" ");
+                        let mut color_grab_split = color_grab.trim().split(' ');
                         let amount = color_grab_split.next().unwrap().parse::<u32>().unwrap();
                         let color = color_grab_split.next().unwrap();
                         match color {
