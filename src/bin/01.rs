@@ -5,6 +5,9 @@ use itertools::Itertools;
 advent_of_code::solution!(1);
 
 pub fn part_one(input: &str) -> Option<u32> {
+    let x = 2;
+    println!("{}", x);
+
     Some(
         input
             .split("\n")
