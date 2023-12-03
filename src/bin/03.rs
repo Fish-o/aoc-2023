@@ -122,7 +122,6 @@ pub fn part_one(input: &str) -> Option<u32> {
     let mut map = Map::from(input);
     map.collapse_numbers();
     Some(map.get_sum())
-    // None
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
