@@ -61,14 +61,11 @@ impl Map {
         let mut locations = Vec::new();
         for y in row - 1..=row + 1 {
             for x in col - 1..=col + 1 {
-                match self.map[y][x] {
-                    Tile::CollapsedNumber(location, n) => {
-                        if !locations.contains(&location) {
-                            locations.push(location);
-                            numbers.push((location, n));
-                        }
+                if let Tile::CollapsedNumber(location, n) = self.map[y][x] {
+                    if !locations.contains(&location) {
+                        locations.push(location);
+                        numbers.push((location, n));
                     }
-                    _ => (),
                 }
             }
         }
@@ -80,17 +77,14 @@ impl Map {
         let map = self.map.clone();
         for (y, row) in map.iter().enumerate() {
             for (x, tile) in row.iter().enumerate() {
-                match tile {
-                    Tile::Symbol(_) => {
-                        let numbers = self.get_numbers_around(y, x);
-                        for (location, n) in numbers {
-                            if !all_locations.contains(&location) {
-                                all_locations.push(location);
-                                all_numbers.push(n);
-                            }
+                if let Tile::Symbol(_) = tile {
+                    let numbers = self.get_numbers_around(y, x);
+                    for (location, n) in numbers {
+                        if !all_locations.contains(&location) {
+                            all_locations.push(location);
+                            all_numbers.push(n);
                         }
                     }
-                    _ => (),
                 }
             }
         }
@@ -102,16 +96,13 @@ impl Map {
         let mut sum = 0;
         for (y, row) in map.iter().enumerate() {
             for (x, tile) in row.iter().enumerate() {
-                match tile {
-                    Tile::Symbol('*') => {
-                        let numbers = self.get_numbers_around(y, x);
-                        if numbers.len() == 2 {
-                            let (_, n1) = numbers[0];
-                            let (_, n2) = numbers[1];
-                            sum += n1 * n2;
-                        }
+                if let Tile::Symbol('*') = tile {
+                    let numbers = self.get_numbers_around(y, x);
+                    if numbers.len() == 2 {
+                        let (_, n1) = numbers[0];
+                        let (_, n2) = numbers[1];
+                        sum += n1 * n2;
                     }
-                    _ => (),
                 }
             }
         }

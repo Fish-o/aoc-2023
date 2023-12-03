@@ -59,8 +59,8 @@ pub fn part_two(input: &str) -> Option<u32> {
                     _ => second,
                 });
                 changed.push(third);
-                if fourth.is_some() {
-                    changed.push(fourth.unwrap());
+                if let Some(fourth) = fourth {
+                    changed.push(fourth);
                 }
                 changed.iter().collect::<String>()
             })
