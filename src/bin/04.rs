@@ -7,7 +7,7 @@ advent_of_code::solution!(4);
 fn parse_data(input: &str) -> Vec<usize> {
     input
         .lines()
-        .map(|line| line.split(":"))
+        .map(|line| line.split(':'))
         .map(|mut line| (line.next().unwrap(), line.next().unwrap()))
         .map(|(_, card)| {
             let mut card = card.split('|');
