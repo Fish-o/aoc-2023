@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-
 use itertools::Itertools;
-
+use std::collections::HashMap;
 advent_of_code::solution!(4);
 
 fn parse_data(input: &str) -> Vec<usize> {
