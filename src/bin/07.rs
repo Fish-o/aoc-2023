@@ -12,83 +12,12 @@ enum HandType {
     HighCard,
 }
 
-impl cmp::Ord for HandType {
-    fn cmp(&self, other: &Self) -> cmp::Ordering {
-        let worth_self = match self {
-            HandType::FiveOfAKind => 8,
-            HandType::FourOfAKind => 7,
-            HandType::FullHouse => 6,
-            HandType::ThreeOfAKind => 5,
-            HandType::TwoPair => 4,
-            HandType::OnePair => 3,
-            HandType::HighCard => 2,
-        };
-        let worth_other = match other {
-            HandType::FiveOfAKind => 8,
-            HandType::FourOfAKind => 7,
-            HandType::FullHouse => 6,
-            HandType::ThreeOfAKind => 5,
-            HandType::TwoPair => 4,
-            HandType::OnePair => 3,
-            HandType::HighCard => 2,
-        };
-        worth_self.cmp(&worth_other)
-    }
-}
-impl cmp::PartialOrd for HandType {
-    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-impl cmp::PartialEq for HandType {
-    fn eq(&self, other: &Self) -> bool {
-        self.cmp(other) == cmp::Ordering::Equal
-    }
-}
-impl cmp::Eq for HandType {}
 #[derive(Debug)]
 
 struct Hand {
     cards: [u32; 5],
     hand_type: HandType,
     bid: u32,
-}
-impl cmp::PartialEq for Hand {
-    fn eq(&self, other: &Self) -> bool {
-        self.cards == other.cards
-    }
-}
-impl cmp::Eq for Hand {}
-impl cmp::PartialOrd for Hand {
-    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-impl cmp::Ord for Hand {
-    fn cmp(&self, other: &Self) -> cmp::Ordering {
-        if self.hand_type > other.hand_type {
-            return cmp::Ordering::Greater;
-        } else if self.hand_type < other.hand_type {
-            return cmp::Ordering::Less;
-        } else {
-            for (self_card, other_card) in self.cards.iter().zip(other.cards.iter()) {
-                let mut self_card = self_card;
-                let mut other_card = other_card;
-                if self_card == &11 {
-                    self_card = &1;
-                }
-                if other_card == &11 {
-                    other_card = &1;
-                }
-                if self_card > other_card {
-                    return cmp::Ordering::Greater;
-                } else if self_card < other_card {
-                    return cmp::Ordering::Less;
-                }
-            }
-        }
-        cmp::Ordering::Equal
-    }
 }
 
 impl Hand {
@@ -236,5 +165,82 @@ mod tests {
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(5905));
+    }
+}
+
+// ----- Implementing ordering traits for HandType -----
+
+impl cmp::Ord for HandType {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        let worth_self = match self {
+            HandType::FiveOfAKind => 8,
+            HandType::FourOfAKind => 7,
+            HandType::FullHouse => 6,
+            HandType::ThreeOfAKind => 5,
+            HandType::TwoPair => 4,
+            HandType::OnePair => 3,
+            HandType::HighCard => 2,
+        };
+        let worth_other = match other {
+            HandType::FiveOfAKind => 8,
+            HandType::FourOfAKind => 7,
+            HandType::FullHouse => 6,
+            HandType::ThreeOfAKind => 5,
+            HandType::TwoPair => 4,
+            HandType::OnePair => 3,
+            HandType::HighCard => 2,
+        };
+        worth_self.cmp(&worth_other)
+    }
+}
+impl cmp::PartialOrd for HandType {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl cmp::PartialEq for HandType {
+    fn eq(&self, other: &Self) -> bool {
+        self.cmp(other) == cmp::Ordering::Equal
+    }
+}
+impl cmp::Eq for HandType {}
+
+// ----- Implementing ordering traits for Hand -----
+
+impl cmp::Ord for Hand {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        if self.hand_type > other.hand_type {
+            return cmp::Ordering::Greater;
+        } else if self.hand_type < other.hand_type {
+            return cmp::Ordering::Less;
+        } else {
+            for (self_card, other_card) in self.cards.iter().zip(other.cards.iter()) {
+                let mut self_card = self_card;
+                let mut other_card = other_card;
+                if self_card == &11 {
+                    self_card = &1;
+                }
+                if other_card == &11 {
+                    other_card = &1;
+                }
+                if self_card > other_card {
+                    return cmp::Ordering::Greater;
+                } else if self_card < other_card {
+                    return cmp::Ordering::Less;
+                }
+            }
+        }
+        cmp::Ordering::Equal
+    }
+}
+impl cmp::PartialEq for Hand {
+    fn eq(&self, other: &Self) -> bool {
+        self.cards == other.cards
+    }
+}
+impl cmp::Eq for Hand {}
+impl cmp::PartialOrd for Hand {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
