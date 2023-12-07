@@ -78,10 +78,11 @@ impl Hand {
         let mut cards = [0; 5];
         let mut card_counts = [0; 13];
         for (i, card) in hand.chars().map(Self::convert_card).enumerate() {
-            cards[i] = card;
             if use_jokers && card == 11 {
+                cards[i] = 1;
                 jokers += 1;
             } else {
+                cards[i] = card;
                 card_counts[card as usize % 13] += 1;
             }
         }
@@ -215,14 +216,6 @@ impl cmp::Ord for Hand {
             return cmp::Ordering::Less;
         } else {
             for (self_card, other_card) in self.cards.iter().zip(other.cards.iter()) {
-                let mut self_card = self_card;
-                let mut other_card = other_card;
-                if self_card == &11 {
-                    self_card = &1;
-                }
-                if other_card == &11 {
-                    other_card = &1;
-                }
                 if self_card > other_card {
                     return cmp::Ordering::Greater;
                 } else if self_card < other_card {
