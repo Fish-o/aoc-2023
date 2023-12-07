@@ -163,7 +163,6 @@ pub fn part_two(input: &str) -> Option<u32> {
         if seeds.len() == 0 {
             break;
         }
-        println!("Seeds left: {}", seeds.len());
         // Get first el of seeds
         let seed1 = seeds.remove(0);
         let seed2 = seeds.remove(0);

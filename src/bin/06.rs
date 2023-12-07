@@ -39,7 +39,6 @@ pub fn part_one(input: &str) -> Option<u32> {
                 break;
             }
         }
-        println!("{} {} {}", time, min, max);
         prod *= (max - min) + 1;
     }
     Some(prod)
@@ -74,7 +73,6 @@ pub fn part_two(input: &str) -> Option<u64> {
             break;
         }
     }
-    println!("Halfway there!");
     let mut max = 0;
     for time_spent_pressing in 0..time {
         let time_spent_pressing = time - time_spent_pressing;
@@ -83,7 +81,6 @@ pub fn part_two(input: &str) -> Option<u64> {
             break;
         }
     }
-    println!("{} {} {}", time, min, max);
     prod *= (max - min) + 1;
     Some(prod)
 }
