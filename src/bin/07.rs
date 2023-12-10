@@ -88,28 +88,26 @@ impl Hand {
         }
 
         // Substituted the Joker for every possible card, try all, use the best one:
-        let mut possible_card_counts: Vec<[i32; 13]> = vec![card_counts];
-        for _ in 0..jokers {
-            let current_possible_card_counts = possible_card_counts.clone();
-            for possible_card_count in current_possible_card_counts {
-                for i in 0..13 {
-                    let mut possible_card_count = possible_card_count.clone();
-                    possible_card_count[i] += 1;
-                    possible_card_counts.push(possible_card_count);
-                }
+        if jokers > 0 {
+            Self {
+                cards,
+                hand_type: (0..13)
+                    .map(|i| {
+                        let mut possible_card_count = card_counts.clone();
+                        possible_card_count[i] += jokers;
+                        possible_card_count
+                    })
+                    .map(|c| Self::get_hand_type(&c))
+                    .max()
+                    .unwrap(),
+                bid,
             }
-        }
-
-        let best_hand_type = possible_card_counts
-            .iter()
-            .map(|c| Self::get_hand_type(c))
-            .max()
-            .unwrap();
-
-        Self {
-            cards,
-            hand_type: best_hand_type,
-            bid,
+        } else {
+            Self {
+                cards,
+                hand_type: Self::get_hand_type(&card_counts),
+                bid,
+            }
         }
     }
     pub fn from_normal(input: &str) -> Self {

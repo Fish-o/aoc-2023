@@ -22,3 +22,7 @@ data
 !data/inputs/.keep
 !data/examples/.keep
 !data/puzzles/.keep
+
+flamegraph.svg
+perf.data
+perf.data.old
