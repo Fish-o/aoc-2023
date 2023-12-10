@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use itertools::{Itertools, Position};
+use itertools::Itertools;
 
 advent_of_code::solution!(8);
 enum Dir {

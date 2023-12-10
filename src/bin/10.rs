@@ -92,22 +92,16 @@ impl Map {
         let mut back = (0, 0);
         let mut back_from_dir = Direction::Up;
         let start = self.find_start();
-        println!("Start: {:?}", start);
         for (pos, dir) in self.get_tiles_around(start) {
-            println!("Tile: {:?} {:?}", pos, dir);
             if let Tile::Pipe(a, b) = self.get_tile(pos) {
-                println!("Tile: {:?} {:?} {:?}", pos, a, b);
                 let mut touching = false;
                 if *a == Self::reverse_dir(dir) {
-                    println!("A");
                     touching = true;
                 } else if *b == Self::reverse_dir(dir) {
-                    println!("B");
                     touching = true;
                 }
 
                 if touching {
-                    println!("Touching: {:?}", touching);
                     if front == (0, 0) {
                         front = pos;
                         front_from_dir = dir;
@@ -124,11 +118,8 @@ impl Map {
         tiles.push(back);
         tiles.push(start);
         for step in 2.. {
-            println!("{}: ", step);
-            println!("Front: {:?} {:?}", front, front_from_dir);
             (front, front_from_dir) = match self.get_tile(front) {
                 Tile::Pipe(a, b) => {
-                    println!("Pipe: {:?} {:?}", a, b);
                     if Self::reverse_dir(*a) == front_from_dir {
                         (b.apply(front), *b)
                     } else {
@@ -137,7 +128,6 @@ impl Map {
                 }
                 _ => panic!("Invalid tile"),
             };
-            println!("Front: {:?} {:?}", front, front_from_dir);
             (back, back_from_dir) = match self.get_tile(back) {
                 Tile::Pipe(a, b) => {
                     if Self::reverse_dir(*a) == back_from_dir {
@@ -166,7 +156,8 @@ impl Map {
         // I FJ O
         // O F7 O
 
-        let (_, tiles, s_type) = self.find_furthest_node();
+        let (_, mut tiles, s_type) = self.find_furthest_node();
+        tiles.sort_unstable();
         let s = match s_type {
             (Direction::Up, Direction::Down) | (Direction::Down, Direction::Up) => "|",
             (Direction::Left, Direction::Right) | (Direction::Right, Direction::Left) => "-",
@@ -186,7 +177,7 @@ impl Map {
                 let mut action = None;
                 let row = row.replace('S', s);
                 for (y, c) in row.chars().enumerate() {
-                    if !tiles.contains(&(x, y)) {
+                    if !tiles.binary_search(&(x, y)).is_ok() {
                         if inside {
                             count += 1;
                         }
@@ -216,8 +207,7 @@ impl Map {
                             }
                             ('J', Some('L')) => {}
                             (a, b) => {
-                                println!("{} {:?}", a, b);
-                                panic!("Should never reach this")
+                                unreachable!("Invalid tile: {:?} {:?}", a, b);
                             }
                         }
                     }
