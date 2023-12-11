@@ -9,11 +9,15 @@ enum Tile {
 }
 struct GalaxyMap {
     map: Vec<Vec<Tile>>,
+    sorted_empty_rows: Vec<i64>,
+    sorted_empty_columns: Vec<i64>,
 }
+// 1,4,6,10
+// 3 - 7
 
 impl GalaxyMap {
     pub fn from_str(input: &str) -> Self {
-        GalaxyMap {
+        let mut m = GalaxyMap {
             map: input
                 .lines()
                 .filter(|l| !l.is_empty())
@@ -27,9 +31,26 @@ impl GalaxyMap {
                         .collect_vec()
                 })
                 .collect_vec(),
-        }
+            sorted_empty_columns: vec![],
+            sorted_empty_rows: vec![],
+        };
+        m.sorted_empty_columns = m.get_empty_cols();
+        m.sorted_empty_rows = m.get_empty_rows();
+        m.sorted_empty_columns.sort_unstable();
+        m.sorted_empty_rows.sort_unstable();
+        m
     }
-    pub fn get_empty_rows(&self) -> Vec<u32> {
+    fn empty_rows_in_range(&self, s: i64, e: i64) -> i64 {
+        let start_i = self.sorted_empty_rows.partition_point(|r| r < &s) as i64;
+        let end_i = self.sorted_empty_rows.partition_point(|r| r < &e) as i64;
+        (end_i - start_i).abs()
+    }
+    fn empty_cols_in_range(&self, s: i64, e: i64) -> i64 {
+        let start_i = self.sorted_empty_columns.partition_point(|r| r < &s) as i64;
+        let end_i = self.sorted_empty_columns.partition_point(|r| r < &e) as i64;
+        (end_i - start_i).abs()
+    }
+    pub fn get_empty_rows(&self) -> Vec<i64> {
         let mut rows = vec![];
         let len = self.map.len() - 1;
         for i in 0..len {
@@ -38,12 +59,12 @@ impl GalaxyMap {
                 Tile::Empty => true,
                 Tile::Galaxy => false,
             }) {
-                rows.push(i as u32);
+                rows.push(i as i64);
             }
         }
         rows
     }
-    pub fn get_empty_cols(&self) -> Vec<u32> {
+    pub fn get_empty_cols(&self) -> Vec<i64> {
         let mut cols = vec![];
         let len = self.map.first().unwrap().len();
         for i in 0..len {
@@ -51,7 +72,7 @@ impl GalaxyMap {
                 Tile::Empty => true,
                 Tile::Galaxy => false,
             }) {
-                cols.push(i as u32);
+                cols.push(i as i64);
             }
         }
         cols
@@ -117,30 +138,15 @@ impl GalaxyMap {
         for (r, row) in self.map.iter().enumerate() {
             for (c, tile) in row.iter().enumerate() {
                 if tile == &Tile::Galaxy {
-                    galaxy_locations.push((r, c));
+                    galaxy_locations.push((r as i64, c as i64));
                 }
             }
         }
-        let e_rows = self.get_empty_rows();
-        let e_cols = self.get_empty_cols();
         let all_pairs = galaxy_locations.iter().tuple_combinations().collect_vec();
         let r = all_pairs.iter().map(|((r1, c1), (r2, c2))| {
             let mut empties = 0;
-            empties += e_rows
-                .iter()
-                .filter(|r| {
-                    let r = &(**r as usize);
-                    (r1 > r && r2 < r) || (r2 > r && r1 < r)
-                })
-                .count();
-            empties += e_cols
-                .iter()
-                .filter(|c| {
-                    let c = &(**c as usize);
-                    (c1 > c && c2 < c) || (c2 > c && c1 < c)
-                })
-                .count();
-
+            empties += self.empty_rows_in_range(*r1, *r2);
+            empties += self.empty_cols_in_range(*c1, *c2);
             ((*r1 as i64 - *r2 as i64).abs() + (*c1 as i64 - *c2 as i64).abs())
                 + ((1000000 - 1) * (empties as i64))
         });
@@ -150,12 +156,12 @@ impl GalaxyMap {
 pub fn part_one(input: &str) -> Option<i32> {
     let mut map = GalaxyMap::from_str(input);
     map.expand();
-    map.print();
+    // map.print();
     Some(map.part1())
 }
 
 pub fn part_two(input: &str) -> Option<i64> {
-    let mut map = GalaxyMap::from_str(input);
+    let map = GalaxyMap::from_str(input);
     Some(map.part2())
 }
 
