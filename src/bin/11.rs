@@ -105,7 +105,7 @@ impl GalaxyMap {
             }
         }
     }
-    pub fn print(&self) {
+    pub fn _print(&self) {
         for line in &self.map {
             for c in line {
                 match c {
