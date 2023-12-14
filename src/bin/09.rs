@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 advent_of_code::solution!(9);
 
-pub fn get_value1(layer: &Vec<i64>) -> i64 {
+pub fn get_value1(layer: &[i64]) -> i64 {
     if layer.iter().all(|el| el == &0) {
         return 0;
     }
@@ -13,7 +13,7 @@ pub fn get_value1(layer: &Vec<i64>) -> i64 {
         .collect_vec();
     return get_value1(&new_layer) + *layer.last().unwrap();
 }
-pub fn get_value2(layer: &Vec<i64>) -> i64 {
+pub fn get_value2(layer: &[i64]) -> i64 {
     if layer.iter().all(|el| el == &0) {
         return 0;
     }
@@ -29,7 +29,14 @@ pub fn part_one(input: &str) -> Option<i64> {
     let sum = input
         .trim()
         .lines()
-        .map(|line| get_value1(&line.split(" ").map(|x| x.parse::<i64>().unwrap()).collect()))
+        .map(|line| {
+            get_value1(
+                &line
+                    .split(' ')
+                    .map(|x| x.parse::<i64>().unwrap())
+                    .collect_vec(),
+            )
+        })
         .sum();
     Some(sum)
 }
@@ -38,7 +45,14 @@ pub fn part_two(input: &str) -> Option<i64> {
     let sum = input
         .trim()
         .lines()
-        .map(|line| get_value2(&line.split(" ").map(|x| x.parse::<i64>().unwrap()).collect()))
+        .map(|line| {
+            get_value2(
+                &line
+                    .split(' ')
+                    .map(|x| x.parse::<i64>().unwrap())
+                    .collect_vec(),
+            )
+        })
         .sum();
     Some(sum)
 }

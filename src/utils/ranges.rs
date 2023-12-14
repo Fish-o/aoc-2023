@@ -10,8 +10,8 @@ pub struct Range {
 impl Range {
     pub fn new(start: i64, end: i64) -> Range {
         Range {
-            start: start,
-            end: end,
+            start,
+            end,
         }
     }
 
@@ -35,6 +35,12 @@ impl fmt::Display for Range {
 #[derive(Debug, Clone)]
 pub struct RangeStack {
     pub ranges: Vec<Range>,
+}
+
+impl Default for RangeStack {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl RangeStack {

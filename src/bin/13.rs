@@ -61,7 +61,7 @@ impl Pattern {
                 reflects.push(last_matching_rows);
             }
         }
-        return reflects;
+        reflects
     }
     pub fn find_col_reflect(&mut self) -> Vec<usize> {
         self.rotate();
@@ -116,7 +116,7 @@ impl Pattern {
 pub fn part_one(input: &str) -> Option<u32> {
     let res = input
         .split("\n\n")
-        .map(|s| Pattern::from_str(s))
+        .map(Pattern::from_str)
         .map(|mut p| {
             (p.find_row_reflects().first().unwrap_or(&0) * 100)
                 + p.find_col_reflect().first().unwrap_or(&0)
@@ -128,7 +128,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let res = input
         .split("\n\n")
-        .map(|s| Pattern::from_str(s))
+        .map(Pattern::from_str)
         .map(|mut p| p.brute_force_smudge())
         .sum::<usize>();
     Some(res as u32)

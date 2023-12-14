@@ -5,21 +5,21 @@ pub fn part_one(input: &str) -> Option<u32> {
     let times = lines
         .next()
         .unwrap()
-        .split_once(":")
+        .split_once(':')
         .unwrap()
         .1
         .trim()
-        .split(" ")
+        .split(' ')
         .filter(|n| !n.is_empty())
         .map(|s| s.parse::<u32>().unwrap());
     let distances = lines
         .next()
         .unwrap()
-        .split_once(":")
+        .split_once(':')
         .unwrap()
         .1
         .trim()
-        .split(" ")
+        .split(' ')
         .filter(|n| !n.is_empty())
         .map(|s| s.parse::<u32>().unwrap());
     let mut prod = 1;
@@ -49,20 +49,20 @@ pub fn part_two(input: &str) -> Option<u64> {
     let time = lines
         .next()
         .unwrap()
-        .split_once(":")
+        .split_once(':')
         .unwrap()
         .1
         .trim()
-        .replace(" ", "")
+        .replace(' ', "")
         .parse::<u64>()
         .unwrap();
     let record = lines
         .next()
         .unwrap()
-        .split_once(":")
+        .split_once(':')
         .unwrap()
         .1
-        .replace(" ", "")
+        .replace(' ', "")
         .parse::<u64>()
         .unwrap();
     let mut prod = 1;

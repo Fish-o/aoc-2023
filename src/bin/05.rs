@@ -59,7 +59,7 @@ impl AlmanacEntry {
                 return (val - range.start) + range.destination;
             }
         }
-        return val;
+        val
     }
 }
 
@@ -67,21 +67,19 @@ pub fn part_one(input: &str) -> Option<i64> {
     let mut sections = input.split("\n\n");
     let seeds = sections.next().unwrap().trim();
     let seeds = seeds
-        .split(":")
-        .skip(1)
-        .next()
+        .split(':').nth(1)
         .unwrap()
-        .split(" ")
+        .split(' ')
         .filter(|&s| !s.is_empty())
         .map(|s| s.parse::<i64>().unwrap())
         .collect_vec();
     let sections = sections
-        .map(|s| s.split("\n").filter(|&s| !s.is_empty()))
+        .map(|s| s.split('\n').filter(|&s| !s.is_empty()))
         .map(|mut s| {
             let _ = s.next().unwrap();
             let mut s_ranges = s
                 .map(|s| {
-                    let mut numbers = s.split(" ").filter(|&s| !s.is_empty());
+                    let mut numbers = s.split(' ').filter(|&s| !s.is_empty());
                     let dst = numbers.next().unwrap();
                     let src = numbers.next().unwrap();
                     let len = numbers.next().unwrap();
@@ -117,7 +115,7 @@ pub fn part_two(input: &str) -> Option<i64> {
     let mut sections = input.split("\n\n");
     let seeds = sections.next().unwrap().trim();
     let seeds = seeds
-        .split_once(":")
+        .split_once(':')
         .unwrap()
         .1
         .split_whitespace()
@@ -129,7 +127,7 @@ pub fn part_two(input: &str) -> Option<i64> {
         map.sort_unstable_by_key(|(_dst, src, _len)| *src);
     }
     maps = sections
-        .map(|s| s.split("\n").filter(|&s| !s.is_empty()))
+        .map(|s| s.split('\n').filter(|&s| !s.is_empty()))
         .map(|mut s| {
             let _ = s.next().unwrap();
             let s_ranges = s
@@ -141,7 +139,6 @@ pub fn part_two(input: &str) -> Option<i64> {
                         s.next().unwrap().parse::<i64>().unwrap(),
                         s.next().unwrap().parse::<i64>().unwrap(),
                     )
-                        .into()
                 })
                 .collect::<Vec<_>>();
             s_ranges

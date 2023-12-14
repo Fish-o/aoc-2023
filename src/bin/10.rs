@@ -175,7 +175,7 @@ impl Map {
                 let mut action = None;
                 let row = row.replace('S', s);
                 for (y, c) in row.chars().enumerate() {
-                    if !tiles.binary_search(&(x, y)).is_ok() {
+                    if tiles.binary_search(&(x, y)).is_err() {
                         if inside {
                             count += 1;
                         }

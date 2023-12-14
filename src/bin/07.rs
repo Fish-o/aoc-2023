@@ -71,7 +71,7 @@ impl Hand {
     }
 
     fn raw_from(input: &str, use_jokers: bool) -> Self {
-        let input = input.split_once(" ").unwrap();
+        let input = input.split_once(' ').unwrap();
         let hand = input.0;
         let bid = input.1.parse::<u32>().unwrap();
         let mut jokers = 0;
@@ -93,7 +93,7 @@ impl Hand {
                 cards,
                 hand_type: (0..13)
                     .map(|i| {
-                        let mut possible_card_count = card_counts.clone();
+                        let mut possible_card_count = card_counts;
                         possible_card_count[i] += jokers;
                         possible_card_count
                     })
@@ -122,7 +122,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let mut cards = input
         .lines()
         .filter(|l| !l.is_empty())
-        .map(|s| Hand::from_normal(s))
+        .map(Hand::from_normal)
         .collect::<Vec<_>>();
     cards.sort();
 
@@ -138,7 +138,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     let mut cards = input
         .lines()
         .filter(|l| !l.is_empty())
-        .map(|s| Hand::from_jokers(s))
+        .map(Hand::from_jokers)
         .collect::<Vec<_>>();
     cards.sort();
 
@@ -148,23 +148,6 @@ pub fn part_two(input: &str) -> Option<u32> {
             .enumerate()
             .fold(0, |acc, (i, card)| acc + (i as u32 + 1) * card.bid),
     )
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part_one() {
-        let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(6440));
-    }
-
-    #[test]
-    fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(5905));
-    }
 }
 
 // ----- Implementing ordering traits for HandType -----
@@ -208,19 +191,18 @@ impl cmp::Eq for HandType {}
 
 impl cmp::Ord for Hand {
     fn cmp(&self, other: &Self) -> cmp::Ordering {
-        if self.hand_type > other.hand_type {
-            return cmp::Ordering::Greater;
-        } else if self.hand_type < other.hand_type {
-            return cmp::Ordering::Less;
-        } else {
-            for (self_card, other_card) in self.cards.iter().zip(other.cards.iter()) {
-                if self_card > other_card {
-                    return cmp::Ordering::Greater;
-                } else if self_card < other_card {
-                    return cmp::Ordering::Less;
-                }
+        let cmp = self.hand_type.cmp(&other.hand_type);
+        if cmp != cmp::Ordering::Equal {
+            return cmp;
+        }
+
+        for (self_card, other_card) in self.cards.iter().zip(other.cards.iter()) {
+            let cmp = self_card.cmp(other_card);
+            if cmp != cmp::Ordering::Equal {
+                return cmp;
             }
         }
+
         cmp::Ordering::Equal
     }
 }
@@ -233,5 +215,22 @@ impl cmp::Eq for Hand {}
 impl cmp::PartialOrd for Hand {
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
         Some(self.cmp(other))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part_one() {
+        let result = part_one(&advent_of_code::template::read_file("examples", DAY));
+        assert_eq!(result, Some(6440));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
+        assert_eq!(result, Some(5905));
     }
 }

@@ -5,7 +5,7 @@ use itertools::Itertools;
 advent_of_code::solution!(12);
 
 pub fn map_verifies_condition(map: &str, condition: &[u32]) -> bool {
-    let broken = map.split(".").filter(|l| !l.is_empty()).collect_vec();
+    let broken = map.split('.').filter(|l| !l.is_empty()).collect_vec();
     if broken.len() != condition.len() {
         return false;
     } else {
@@ -21,7 +21,7 @@ pub fn map_verifies_condition(map: &str, condition: &[u32]) -> bool {
 pub fn get_permutations(
     map: &String,
     condition: &[u32],
-    mut cache: &mut HashMap<(String, Vec<u32>), i64>,
+    cache: &mut HashMap<(String, Vec<u32>), i64>,
 ) -> i64 {
     let key = (map.to_owned(), condition.to_vec());
     if let Some(c) = cache.get(&key) {
@@ -43,7 +43,7 @@ pub fn get_permutations(
             '#' => broken_count += 1,
             '?' => {
                 let new_map1 = "#".repeat(broken_count as usize) + "#" + &map[(index + 1)..];
-                let opt1 = get_permutations(&new_map1, &condition[condition_i..], &mut cache);
+                let opt1 = get_permutations(&new_map1, &condition[condition_i..], cache);
                 let opt1_key = (new_map1.clone(), condition[condition_i..].to_vec());
                 cache.insert(opt1_key, opt1);
                 let new_map2 = map[(index + 1)..].to_owned();
@@ -53,7 +53,7 @@ pub fn get_permutations(
                     }
                     condition_i += 1;
                 }
-                let opt2 = get_permutations(&new_map2, &condition[condition_i..], &mut cache);
+                let opt2 = get_permutations(&new_map2, &condition[condition_i..], cache);
                 let opt2_key = (new_map2, condition[condition_i..].to_vec());
                 cache.insert(opt2_key, opt2);
                 return opt2 + opt1;
@@ -80,13 +80,13 @@ pub fn part_one(input: &str) -> Option<i64> {
     input
         .lines()
         .map(|l| {
-            let l = l.split_once(" ").unwrap();
+            let l = l.split_once(' ').unwrap();
             let map = l.0.trim();
             let group_sizes =
                 l.1.split(',')
                     .map(|s| s.parse::<u32>().unwrap())
                     .collect_vec();
-            get_permutations(&map.to_owned(), &group_sizes, &mut cache) as i64
+            get_permutations(&map.to_owned(), &group_sizes, &mut cache)
         })
         .sum::<i64>()
         .into()
@@ -98,7 +98,7 @@ pub fn part_two(input: &str) -> Option<i64> {
         input
             .lines()
             .map(|line| {
-                let l = line.split_once(" ").unwrap();
+                let l = line.split_once(' ').unwrap();
                 let map = expand_map(l.0.trim());
                 let group_sizes =
                     l.1.split(',')

@@ -126,22 +126,6 @@ impl Platform {
         }
         load as u32
     }
-
-    pub fn _rotate_right(&mut self) {
-        let mut new_map = vec![vec!['.'; self.map.len()]; self.map.len()];
-        for r in 0..self.map.len() {
-            for c in 0..self.map[r].len() {
-                new_map[c][self.map.len() - r - 1] = self.map[r][c];
-            }
-        }
-        self.map = new_map;
-    }
-
-    pub fn _print(&self) {
-        for row in &self.map {
-            println!("{}", row.iter().join(""));
-        }
-    }
 }
 
 pub fn part_one(input: &str) -> Option<u32> {

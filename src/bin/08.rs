@@ -23,11 +23,11 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     let mut node_map = HashMap::new();
     for node in input.1.trim().lines() {
-        let node = node.split_once("=").unwrap();
+        let node = node.split_once('=').unwrap();
         let name = node.0.trim();
         let values = node.1.trim().split_once(", ").unwrap();
-        let left = values.0.trim().replace("(", "");
-        let right = values.1.trim().replace(")", "");
+        let left = values.0.trim().replace('(', "");
+        let right = values.1.trim().replace(')', "");
         node_map.insert(name, (left, right));
     }
 
@@ -63,14 +63,14 @@ pub fn part_two(input: &str) -> Option<i128> {
 
     let mut node_map = HashMap::new();
     for node in input.1.trim().lines() {
-        let node = node.split_once("=").unwrap();
+        let node = node.split_once('=').unwrap();
         let name = node.0.trim();
         let values = node.1.trim().split_once(", ").unwrap();
-        let left = values.0.trim().replace("(", "");
-        let right = values.1.trim().replace(")", "");
+        let left = values.0.trim().replace('(', "");
+        let right = values.1.trim().replace(')', "");
         node_map.insert(name, (left, right));
     }
-    let positions = node_map.keys().filter(|k| k.ends_with("A")).collect_vec();
+    let positions = node_map.keys().filter(|k| k.ends_with('A')).collect_vec();
     let i = positions
         .iter()
         .map(|p| {
@@ -83,7 +83,7 @@ pub fn part_two(input: &str) -> Option<i128> {
                     Dir::Left => pos.1 .0.as_str(),
                     Dir::Right => pos.1 .1.as_str(),
                 };
-                if new_pos.ends_with("Z") {
+                if new_pos.ends_with('Z') {
                     break;
                 }
                 pos = (new_pos, node_map.get(new_pos).unwrap());

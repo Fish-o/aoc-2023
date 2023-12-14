@@ -147,8 +147,8 @@ impl GalaxyMap {
             let mut empties = 0;
             empties += self.empty_rows_in_range(*r1, *r2);
             empties += self.empty_cols_in_range(*c1, *c2);
-            ((*r1 as i64 - *r2 as i64).abs() + (*c1 as i64 - *c2 as i64).abs())
-                + ((1000000 - 1) * (empties as i64))
+            ((*r1 - *r2).abs() + (*c1 - *c2).abs())
+                + ((1000000 - 1) * empties)
         });
         r.sum()
     }
