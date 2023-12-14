@@ -19,6 +19,13 @@ pub fn read_file(folder: &str, day: Day) -> String {
     f.expect("could not open input file")
 }
 
+pub fn read_file_pt(folder: &str, day: Day) -> String {
+    let cwd = env::current_dir().unwrap();
+    let filepath = cwd.join("data").join(folder).join(format!("{day}-2.txt"));
+    let f = fs::read_to_string(filepath);
+    f.expect("could not open input file")
+}
+
 /// Creates the constant `DAY` and sets up the input and runner for each part.
 #[macro_export]
 macro_rules! solution {

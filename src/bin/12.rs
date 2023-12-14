@@ -61,9 +61,9 @@ pub fn get_permutations(
             _ => unreachable!(),
         }
     }
-    if condition.len() - condition_i == 0 && broken_count == 0 {
-        1
-    } else if condition.len() - condition_i == 1 && broken_count == condition[condition_i] {
+    if condition.len() - condition_i == 0 && broken_count == 0
+        || condition.len() - condition_i == 1 && broken_count == condition[condition_i]
+    {
         1
     } else {
         0
@@ -86,9 +86,7 @@ pub fn part_one(input: &str) -> Option<i64> {
                 l.1.split(',')
                     .map(|s| s.parse::<u32>().unwrap())
                     .collect_vec();
-            let permutations = get_permutations(&map.to_owned(), &group_sizes, &mut cache);
-            let permutations = permutations;
-            permutations as i64
+            get_permutations(&map.to_owned(), &group_sizes, &mut cache) as i64
         })
         .sum::<i64>()
         .into()

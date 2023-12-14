@@ -95,9 +95,7 @@ impl Map {
         for (pos, dir) in self.get_tiles_around(start) {
             if let Tile::Pipe(a, b) = self.get_tile(pos) {
                 let mut touching = false;
-                if *a == Self::reverse_dir(dir) {
-                    touching = true;
-                } else if *b == Self::reverse_dir(dir) {
+                if *a == Self::reverse_dir(dir) || *b == Self::reverse_dir(dir) {
                     touching = true;
                 }
 
@@ -241,7 +239,7 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        let result = part_two(&advent_of_code::template::read_file_pt("examples", DAY));
+        assert_eq!(result, Some(8));
     }
 }
