@@ -42,23 +42,23 @@ impl Direction {
         }
     }
 }
-impl std::ops::Add<Direction> for Point {
-    type Output = Self;
-    fn add(self, other: Direction) -> Self {
+impl<'a, 'b> std::ops::Add<&'a Direction> for &'b Point {
+    type Output = Point;
+    fn add(self, other: &Direction) -> Point {
         match other {
-            Direction::Up => Self {
+            Direction::Up => Point {
                 x: self.x,
                 y: self.y - 1,
             },
-            Direction::Down => Self {
+            Direction::Down => Point {
                 x: self.x,
                 y: self.y + 1,
             },
-            Direction::Left => Self {
+            Direction::Left => Point {
                 x: self.x - 1,
                 y: self.y,
             },
-            Direction::Right => Self {
+            Direction::Right => Point {
                 x: self.x + 1,
                 y: self.y,
             },
@@ -102,21 +102,49 @@ impl std::ops::Mul<isize> for Direction {
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Point {
-    x: usize,
-    y: usize,
+    x: isize,
+    y: isize,
 }
 impl Point {
     pub fn from_rc((row, col): (usize, usize)) -> Self {
-        Self { x: col, y: row }
+        Self {
+            x: col as isize,
+            y: row as isize,
+        }
     }
     pub fn from_xy((x, y): (usize, usize)) -> Self {
-        Self { x, y }
+        Self {
+            x: x as isize,
+            y: y as isize,
+        }
     }
     pub fn to_rc(&self) -> (usize, usize) {
-        (self.y, self.x)
+        let x = if self.x.is_negative() {
+            0
+        } else {
+            self.x as usize
+        };
+        let y = if self.y.is_negative() {
+            0
+        } else {
+            self.y as usize
+        };
+
+        (y, x)
     }
     pub fn to_xy(&self) -> (usize, usize) {
+        let (row, col) = self.to_rc();
+        (col, row)
+    }
+    pub fn to_xy_isize(&self) -> (isize, isize) {
         (self.x, self.y)
+    }
+    pub fn to_rc_isize(&self) -> (isize, isize) {
+        (self.y, self.x)
+    }
+
+    pub fn has_negative(&self) -> bool {
+        self.x.is_negative() || self.y.is_negative()
     }
 }
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -126,8 +154,15 @@ pub struct Grid {
 
 impl Grid {
     pub fn new(input: &str) -> Self {
-        let grid = input.lines().map(|line| line.chars().collect()).collect();
+        let grid = input
+            .trim()
+            .lines()
+            .map(|line| line.chars().collect())
+            .collect();
         Self { grid }
+    }
+    pub fn size(&self) -> (usize, usize) {
+        (self.grid.len(), self.grid[0].len())
     }
     pub fn get(&self, point: &Point) -> Option<&char> {
         let (row, col) = point.to_rc();
@@ -162,6 +197,13 @@ impl Grid {
             .map(|row| *row.get(col).expect("Invalid column"))
             .collect_vec()
             .into()
+    }
+    pub fn is_valid_point(&self, point: &Point) -> bool {
+        let (row, col) = point.to_rc();
+        if point.has_negative() || row >= self.grid.len() || col >= self.grid[0].len() {
+            return false;
+        }
+        true
     }
     pub fn print(&self) {
         for line in &self.grid {
