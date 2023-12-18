@@ -1,5 +1,5 @@
 use itertools::Itertools;
-
+use std::slice::Iter;
 pub mod ranges;
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -41,6 +41,15 @@ impl Direction {
             _ => panic!("Invalid direction"),
         }
     }
+    pub fn iter() -> Iter<'static, Direction> {
+        static DIRECTIONS: [Direction; 4] = [
+            Direction::Up,
+            Direction::Right,
+            Direction::Down,
+            Direction::Left,
+        ];
+        DIRECTIONS.iter()
+    }
 }
 impl<'a, 'b> std::ops::Add<&'a Direction> for &'b Point {
     type Output = Point;
@@ -65,6 +74,7 @@ impl<'a, 'b> std::ops::Add<&'a Direction> for &'b Point {
         }
     }
 }
+
 impl std::ops::AddAssign<Direction> for Point {
     fn add_assign(&mut self, other: Direction) {
         match other {
@@ -99,7 +109,15 @@ impl std::ops::Mul<isize> for Direction {
         }
     }
 }
-
+impl std::ops::Sub<&Point> for &Point {
+    type Output = Point;
+    fn sub(self, other: &Point) -> Self::Output {
+        Point {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Point {
     x: isize,
@@ -146,7 +164,13 @@ impl Point {
     pub fn has_negative(&self) -> bool {
         self.x.is_negative() || self.y.is_negative()
     }
+
+    pub fn sub(&mut self, other: &Point) {
+        self.x -= other.x;
+        self.y -= other.y;
+    }
 }
+
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Grid {
     grid: Vec<Vec<char>>,
