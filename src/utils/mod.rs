@@ -32,6 +32,15 @@ impl Direction {
             _ => panic!("Invalid direction"),
         }
     }
+    pub fn from_str(s: &str) -> Self {
+        match s.to_ascii_uppercase().as_str() {
+            "UP" | "U" | "N" | "NORTH" => Self::Up,
+            "DOWN" | "D" | "S" | "SOUTH" => Self::Down,
+            "LEFT" | "L" | "W" | "WEST" => Self::Left,
+            "RIGHT" | "R" | "E" | "EAST" => Self::Right,
+            _ => panic!("Invalid direction"),
+        }
+    }
     pub fn from_udlr(c: char) -> Self {
         match c.to_ascii_uppercase() {
             'U' => Self::Up,
@@ -51,23 +60,23 @@ impl Direction {
         DIRECTIONS.iter()
     }
 }
-impl<'a, 'b> std::ops::Add<&'a Direction> for &'b Point {
-    type Output = Point;
-    fn add(self, other: &Direction) -> Point {
+impl<'a, 'b> std::ops::Add<&'a Direction> for &'b GridPoint {
+    type Output = GridPoint;
+    fn add(self, other: &Direction) -> GridPoint {
         match other {
-            Direction::Up => Point {
+            Direction::Up => GridPoint {
                 x: self.x,
                 y: self.y - 1,
             },
-            Direction::Down => Point {
+            Direction::Down => GridPoint {
                 x: self.x,
                 y: self.y + 1,
             },
-            Direction::Left => Point {
+            Direction::Left => GridPoint {
                 x: self.x - 1,
                 y: self.y,
             },
-            Direction::Right => Point {
+            Direction::Right => GridPoint {
                 x: self.x + 1,
                 y: self.y,
             },
@@ -75,7 +84,13 @@ impl<'a, 'b> std::ops::Add<&'a Direction> for &'b Point {
     }
 }
 
-impl std::ops::AddAssign<Direction> for Point {
+impl From<&str> for Direction {
+    fn from(s: &str) -> Self {
+        Self::from_str(s)
+    }
+}
+
+impl std::ops::AddAssign<Direction> for GridPoint {
     fn add_assign(&mut self, other: Direction) {
         match other {
             Direction::Up => self.y -= 1,
@@ -109,6 +124,88 @@ impl std::ops::Mul<isize> for Direction {
         }
     }
 }
+impl std::ops::Sub<&GridPoint> for &GridPoint {
+    type Output = GridPoint;
+    fn sub(self, other: &GridPoint) -> Self::Output {
+        GridPoint {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct GridPoint {
+    x: usize,
+    y: usize,
+}
+impl GridPoint {
+    pub fn from_rc((row, col): (usize, usize)) -> Self {
+        Self { x: col, y: row }
+    }
+    pub fn from_xy((x, y): (usize, usize)) -> Self {
+        Self { x, y }
+    }
+    pub fn to_rc(&self) -> (usize, usize) {
+        (self.y, self.x)
+    }
+    pub fn to_xy(&self) -> (usize, usize) {
+        (self.x, self.y)
+    }
+
+    pub fn sub(&mut self, other: &GridPoint) {
+        self.x -= other.x;
+        self.y -= other.y;
+    }
+}
+
+#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct Point {
+    x: i64,
+    y: i64,
+}
+impl Point {
+    pub fn new(x: i64, y: i64) -> Self {
+        Self { x, y }
+    }
+    pub fn from_xy((x, y): (i64, i64)) -> Self {
+        Self { x, y }
+    }
+    pub fn from_rc((row, col): (i64, i64)) -> Self {
+        Self {
+            x: col as i64,
+            y: row as i64,
+        }
+    }
+    pub fn to_xy(&self) -> (i64, i64) {
+        (self.x, self.y)
+    }
+    pub fn to_rc(&self) -> (i64, i64) {
+        (self.y, self.x)
+    }
+    pub fn sub(&mut self, other: &Point) {
+        self.x -= other.x;
+        self.y -= other.y;
+    }
+    pub fn add(&mut self, other: &Point) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+impl std::ops::Add<&Point> for &Point {
+    type Output = Point;
+    fn add(self, other: &Point) -> Self::Output {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+impl std::ops::AddAssign<&Point> for Point {
+    fn add_assign(&mut self, other: &Point) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
 impl std::ops::Sub<&Point> for &Point {
     type Output = Point;
     fn sub(self, other: &Point) -> Self::Output {
@@ -118,56 +215,98 @@ impl std::ops::Sub<&Point> for &Point {
         }
     }
 }
-#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct Point {
-    x: isize,
-    y: isize,
-}
-impl Point {
-    pub fn from_rc((row, col): (usize, usize)) -> Self {
-        Self {
-            x: col as isize,
-            y: row as isize,
-        }
-    }
-    pub fn from_xy((x, y): (usize, usize)) -> Self {
-        Self {
-            x: x as isize,
-            y: y as isize,
-        }
-    }
-    pub fn to_rc(&self) -> (usize, usize) {
-        let x = if self.x.is_negative() {
-            0
-        } else {
-            self.x as usize
-        };
-        let y = if self.y.is_negative() {
-            0
-        } else {
-            self.y as usize
-        };
-
-        (y, x)
-    }
-    pub fn to_xy(&self) -> (usize, usize) {
-        let (row, col) = self.to_rc();
-        (col, row)
-    }
-    pub fn to_xy_isize(&self) -> (isize, isize) {
-        (self.x, self.y)
-    }
-    pub fn to_rc_isize(&self) -> (isize, isize) {
-        (self.y, self.x)
-    }
-
-    pub fn has_negative(&self) -> bool {
-        self.x.is_negative() || self.y.is_negative()
-    }
-
-    pub fn sub(&mut self, other: &Point) {
+impl std::ops::SubAssign<&Point> for Point {
+    fn sub_assign(&mut self, other: &Point) {
         self.x -= other.x;
         self.y -= other.y;
+    }
+}
+impl std::ops::Mul<i64> for &Point {
+    type Output = Point;
+    fn mul(self, other: i64) -> Self::Output {
+        Point {
+            x: self.x * other,
+            y: self.y * other,
+        }
+    }
+}
+impl std::ops::MulAssign<i64> for Point {
+    fn mul_assign(&mut self, other: i64) {
+        self.x *= other;
+        self.y *= other;
+    }
+}
+impl std::ops::Add<&Direction> for &Point {
+    type Output = Point;
+    fn add(self, other: &Direction) -> Self::Output {
+        match other {
+            Direction::Up => Point {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Direction::Down => Point {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Direction::Left => Point {
+                x: self.x - 1,
+                y: self.y,
+            },
+            Direction::Right => Point {
+                x: self.x + 1,
+                y: self.y,
+            },
+        }
+    }
+}
+impl std::ops::AddAssign<Direction> for Point {
+    fn add_assign(&mut self, other: Direction) {
+        match other {
+            Direction::Up => self.y -= 1,
+            Direction::Down => self.y += 1,
+            Direction::Left => self.x -= 1,
+            Direction::Right => self.x += 1,
+        }
+    }
+}
+impl std::ops::Mul<usize> for &Direction {
+    type Output = Point;
+    fn mul(self, other: usize) -> Self::Output {
+        match self {
+            Direction::Up => Point {
+                x: 0,
+                y: -(other as i64),
+            },
+            Direction::Down => Point {
+                x: 0,
+                y: other as i64,
+            },
+            Direction::Left => Point {
+                x: -(other as i64),
+                y: 0,
+            },
+            Direction::Right => Point {
+                x: other as i64,
+                y: 0,
+            },
+        }
+    }
+}
+impl std::ops::Mul<i64> for &Direction {
+    type Output = Point;
+    fn mul(self, other: i64) -> Self::Output {
+        match self {
+            Direction::Up => Point { x: 0, y: -other },
+            Direction::Down => Point { x: 0, y: other },
+            Direction::Left => Point { x: -other, y: 0 },
+            Direction::Right => Point { x: other, y: 0 },
+        }
+    }
+}
+impl std::ops::MulAssign<usize> for Point {
+    fn mul_assign(&mut self, other: usize) {
+        self.x *= other as i64;
+        self.y *= other as i64;
     }
 }
 
@@ -188,12 +327,12 @@ impl Grid {
     pub fn size(&self) -> (usize, usize) {
         (self.grid.len(), self.grid[0].len())
     }
-    pub fn get(&self, point: &Point) -> Option<&char> {
+    pub fn get(&self, point: &GridPoint) -> Option<&char> {
         let (row, col) = point.to_rc();
         self.grid.get(row).and_then(|row| row.get(col))
     }
 
-    pub fn get_mut(&mut self, point: &Point) -> Option<&mut char> {
+    pub fn get_mut(&mut self, point: &GridPoint) -> Option<&mut char> {
         let (row, col) = point.to_rc();
         self.grid.get_mut(row).and_then(|row| row.get_mut(col))
     }
@@ -222,9 +361,9 @@ impl Grid {
             .collect_vec()
             .into()
     }
-    pub fn is_valid_point(&self, point: &Point) -> bool {
+    pub fn is_valid_point(&self, point: &GridPoint) -> bool {
         let (row, col) = point.to_rc();
-        if point.has_negative() || row >= self.grid.len() || col >= self.grid[0].len() {
+        if row >= self.grid.len() || col >= self.grid[0].len() {
             return false;
         }
         true
@@ -234,4 +373,33 @@ impl Grid {
             println!("{}", line.iter().join(""));
         }
     }
+}
+
+pub fn shoelace(points: &[Point]) -> i64 {
+    // https://en.wikipedia.org/wiki/Shoelace_formula
+    let mut area = 0;
+    for i in 0..points.len() {
+        let (x1, y1) = points[i].to_xy();
+        let (x2, y2) = points[(i + 1) % points.len()].to_xy();
+        area += (y1 + y2) * (x1 - x2);
+    }
+    area = (area / 2).abs();
+    area
+}
+pub fn get_boundary(corners: &[Point]) -> i64 {
+    corners
+        .iter()
+        .circular_tuple_windows()
+        .fold(0, |acc, (p1, p2)| {
+            let (x1, y1) = p1.to_xy();
+            let (x2, y2) = p2.to_xy();
+            acc + (x1 - x2).abs() + (y1 - y2).abs()
+        })
+}
+
+pub fn get_inside_points(area: i64, boundary: i64) -> i64 {
+    // https://en.wikipedia.org/wiki/Pick%27s_theorem
+    // A = i + b/2 - 1
+    // i = A - b/2 + 1
+    area - (boundary / 2) + 1
 }

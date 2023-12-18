@@ -1,9 +1,14 @@
 advent_of_code::solution!(16);
 use std::collections::HashMap;
 
-use advent_of_code::utils::{Direction, Grid, Point};
+use advent_of_code::utils::{Direction, Grid, GridPoint};
 
-fn solve(board: &Grid, dir: &Direction, pos: &Point, visited: &mut HashMap<Point, Vec<Direction>>) {
+fn solve(
+    board: &Grid,
+    dir: &Direction,
+    pos: &GridPoint,
+    visited: &mut HashMap<GridPoint, Vec<Direction>>,
+) {
     let mut current_char = board.get(pos).unwrap();
     let specials = ['/', '\\', '|', '-'];
     let mut pos = pos.clone();
@@ -74,7 +79,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     solve(
         &board,
         &Direction::Right,
-        &Point::from_rc((0, 0)),
+        &GridPoint::from_rc((0, 0)),
         &mut visited,
     );
     Some(visited.len() as u32)
@@ -90,7 +95,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         solve(
             &board,
             &Direction::Down,
-            &Point::from_rc((0, j)),
+            &GridPoint::from_rc((0, j)),
             &mut visited,
         );
         max = max.max(visited.len());
@@ -101,7 +106,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         solve(
             &board,
             &Direction::Up,
-            &Point::from_rc((row_len - 1, j)),
+            &GridPoint::from_rc((row_len - 1, j)),
             &mut visited,
         );
         max = max.max(visited.len());
@@ -112,7 +117,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         solve(
             &board,
             &Direction::Left,
-            &Point::from_rc((i, col_len - 1)),
+            &GridPoint::from_rc((i, col_len - 1)),
             &mut visited,
         );
         max = max.max(visited.len());
@@ -123,7 +128,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         solve(
             &board,
             &Direction::Right,
-            &Point::from_rc((i, 0)),
+            &GridPoint::from_rc((i, 0)),
             &mut visited,
         );
         max = max.max(visited.len());

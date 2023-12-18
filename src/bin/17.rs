@@ -1,10 +1,10 @@
 advent_of_code::solution!(17);
-use advent_of_code::utils::{Direction, Grid, Point};
+use advent_of_code::utils::{Direction, Grid, GridPoint};
 use pathfinding::directed::astar::astar;
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 struct Node {
-    pos: Point,
+    pos: GridPoint,
     arrived_from: Option<Direction>,
 }
 
@@ -29,7 +29,7 @@ impl Node {
                 continue;
             }
             let (n_x, n_y) = (n_x as usize, n_y as usize);
-            let new_pos = Point::from_xy((n_x, n_y));
+            let new_pos = GridPoint::from_xy((n_x, n_y));
             if !map.is_valid_point(&new_pos) {
                 continue;
             }
@@ -46,7 +46,7 @@ impl Node {
                 } else {
                     s_x + i as usize
                 };
-                let pos = Point::from_xy((n_x, s_y));
+                let pos = GridPoint::from_xy((n_x, s_y));
                 if let Some(c) = map.get(&pos) {
                     cost += c.to_digit(10).unwrap();
                 }
@@ -73,7 +73,7 @@ impl Node {
                 continue;
             }
             let (n_x, n_y) = (n_x as usize, n_y as usize);
-            let new_pos = Point::from_xy((n_x, n_y));
+            let new_pos = GridPoint::from_xy((n_x, n_y));
             if !map.is_valid_point(&new_pos) {
                 continue;
             }
@@ -84,7 +84,7 @@ impl Node {
                 } else {
                     s_y + i as usize
                 };
-                let pos = Point::from_xy((s_x, n_y));
+                let pos = GridPoint::from_xy((s_x, n_y));
                 if let Some(c) = map.get(&pos) {
                     cost += c.to_digit(10).unwrap();
                 }
@@ -122,7 +122,7 @@ impl Node {
                 continue;
             }
             let (n_x, n_y) = (n_x as usize, n_y as usize);
-            let new_pos = Point::from_xy((n_x, n_y));
+            let new_pos = GridPoint::from_xy((n_x, n_y));
             if !map.is_valid_point(&new_pos) {
                 continue;
             }
@@ -139,7 +139,7 @@ impl Node {
                 } else {
                     s_x + i as usize
                 };
-                let pos = Point::from_xy((n_x, s_y));
+                let pos = GridPoint::from_xy((n_x, s_y));
                 if let Some(c) = map.get(&pos) {
                     cost += c.to_digit(10).unwrap();
                 }
@@ -167,7 +167,7 @@ impl Node {
                 continue;
             }
             let (n_x, n_y) = (n_x as usize, n_y as usize);
-            let new_pos = Point::from_xy((n_x, n_y));
+            let new_pos = GridPoint::from_xy((n_x, n_y));
             if !map.is_valid_point(&new_pos) {
                 continue;
             }
@@ -178,7 +178,7 @@ impl Node {
                 } else {
                     s_y + i as usize
                 };
-                let pos = Point::from_xy((s_x, n_y));
+                let pos = GridPoint::from_xy((s_x, n_y));
                 if let Some(c) = map.get(&pos) {
                     cost += c.to_digit(10).unwrap();
                 }
@@ -196,21 +196,21 @@ impl Node {
         }
         nodes
     }
-    fn distance_to_goal(&self, goal: &Point) -> u32 {
+    fn distance_to_goal(&self, goal: &GridPoint) -> u32 {
         let (x, y) = self.pos.to_xy();
         let (g_x, g_y) = goal.to_xy();
         ((x as i32 - g_x as i32).abs() + (y as i32 - g_y as i32).abs()) as u32
     }
-    fn heuristic(&self, goal: &Point) -> u32 {
+    fn heuristic(&self, goal: &GridPoint) -> u32 {
         let distance_to_goal = self.distance_to_goal(goal);
         return distance_to_goal;
     }
 }
 pub fn part_one(input: &str) -> Option<u32> {
     let map = Grid::new(input);
-    let goal = Point::from_xy((map.get_grid()[0].len() - 1, map.get_grid().len() - 1));
+    let goal = GridPoint::from_xy((map.get_grid()[0].len() - 1, map.get_grid().len() - 1));
     let start_node = Node {
-        pos: Point::from_rc((0, 0)),
+        pos: GridPoint::from_rc((0, 0)),
         arrived_from: None,
     };
 
@@ -230,9 +230,9 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     let map = Grid::new(input);
-    let goal = Point::from_xy((map.get_grid()[0].len() - 1, map.get_grid().len() - 1));
+    let goal = GridPoint::from_xy((map.get_grid()[0].len() - 1, map.get_grid().len() - 1));
     let start = Node {
-        pos: Point::from_rc((0, 0)),
+        pos: GridPoint::from_rc((0, 0)),
         arrived_from: None,
     };
 
